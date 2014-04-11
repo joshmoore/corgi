@@ -42,7 +42,6 @@ from jenkinsapi.jenkins import Jenkins
 
 import github
 
-from corgi import Corgi
 from config import config
 
 from logging import StreamHandler
@@ -203,6 +202,10 @@ def update_pr_description(pullrequest):
 
 class EventHandler(tornado.web.RequestHandler):
 
+    def initialize(self, settings):
+        self.settings = settings
+        logging.info("Running with handlers %s" % ",".join(settings.keys()))
+
     def post(self):
         data = simplejson.loads(self.request.body)
         logging.info(
@@ -268,6 +271,17 @@ def main():
 
     host = config['server.socket_host']
     port = int(config['server.socket_port'])
+
+    handlers = config['server.handlers']
+    for handler in handlers:
+        try:
+            modname = "corgi_love_%s.handler" % handler
+            mod = __import__(modname, "handler")
+            corgi = getattr(mod.handler, "Corgi")
+        except:
+            log.error('No corgi handler found: ' + modname)
+            continue
+        settings[handler] = corgi
 
     application = tornado.web.Application([
         (r"/event", EventHandler),

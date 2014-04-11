@@ -12,6 +12,9 @@ server.logging_format = "%(asctime)s %(levelname)-7s [%(name)16s] %(message)s"
 server.socket_host = "0.0.0.0"
 server.socket_port = "9090"
 
+server.handlers = "examples", "tests"
+# server.handlers = "redmine", "github", "trac", "phpbb", "qa2", "jenkins", "travis", "trello", "mailman"
+
 # Tornado Web debugging
 # debug = "yes"
 
