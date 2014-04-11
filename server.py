@@ -42,6 +42,7 @@ from jenkinsapi.jenkins import Jenkins
 
 import github
 
+from corgi import Corgi
 from config import config
 
 from logging import StreamHandler
@@ -204,7 +205,11 @@ class EventHandler(tornado.web.RequestHandler):
 
     def initialize(self, settings):
         self.settings = settings
-        logging.info("Running with handlers %s" % ",".join(settings.keys()))
+        self.handlers = dict()
+        for k, v in self.settings.items():
+            if isinstanceof(v, Corgi):
+                self.handlers[k] = v
+        logging.info("Running with handlers %s" % ",".join(self.handlers.keys()))
 
     def post(self):
         data = simplejson.loads(self.request.body)

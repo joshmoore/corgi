@@ -32,10 +32,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import logging
-import copy
+
+from corgi import Corgi as Base
 
 logger = logging.getLogger('corgi.examples')
 
 
-class Corgi(object):
+class Corgi(Base):
     pass
