@@ -44,6 +44,7 @@ import github
 
 from corgi import Corgi
 from config import config
+from collections import defaultdict
 
 from logging import StreamHandler
 from logging.handlers import WatchedFileHandler
@@ -214,28 +215,6 @@ class EventHandler(tornado.web.RequestHandler):
     def post(self):
         data = simplejson.loads(self.request.body)
         # HANDLE EACH
-
-        # Trigger jenkins jobs
-        jobs = config.get(
-            'repository.mapping.%s:%s' % (
-                data['repository']['full_name'],
-                data['pull_request']['base']['ref']
-            )
-        )
-
-        if not jobs:
-            jobs = config.get(
-                'repository.mapping.%s' % data['repository']['full_name']
-            )
-
-        if jobs:
-            if isinstance(jobs, list):
-                for job in jobs:
-                    run_jenkins_job(job)
-            else:
-                run_jenkins_job(jobs)
-        else:
-            logging.info("No Jenkins job mappings found")
 
 
 def main():
