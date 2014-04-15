@@ -55,8 +55,9 @@ class Corgi(Base):
         return "github"
 
     def receive(self, sender, **kwargs):
+        data = kwargs.get("data", {})
         self.logger.info(
-            "Received event for PR %s" % kwargs['pull_request']['number']
+            "Received event for PR %s" % data['pull_request']['number']
         )
 
         from impl import get_pullrequest
@@ -64,15 +65,15 @@ class Corgi(Base):
 
         try:
             pullrequest = get_pullrequest(
-                kwargs['repository']['full_name'],
-                kwargs['pull_request']['number']
+                data['repository']['full_name'],
+                data['pull_request']['number']
             )
 
             update_pr_description(pullrequest)
 
             PULL_REQUEST.send("github",
                               pull_request=pullrequest,
-                              kwargs=kwargs)
+                              data=data)
         except:
             self.logger.exception("Exception updating cross-links")
 

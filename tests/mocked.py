@@ -55,6 +55,4 @@ INITIALIZED.send("mocked", paths={})
 with open(os.path.join(datadir, "step1-open.json"), "r") as f:
     step1_open = json.load(f)
 
-sender = step1_open.pop("sender")
-step1_open["orig_sender"] = sender
-GH_DATA.send("mocked", **step1_open)
+GH_DATA.send("mocked", data=step1_open)

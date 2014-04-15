@@ -86,7 +86,7 @@ class Corgi(object):
 
             def post(self):
                 data = simplejson.loads(self.request.body)
-                signal.send("server", **data)
+                signal.send("server", data=data)
 
         return EventHandler
 
