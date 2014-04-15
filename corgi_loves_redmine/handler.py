@@ -59,5 +59,6 @@ class Corgi(Base):
             from corgi_loves_redmine.impl import update_redmine_issues
             data = kwargs.get("data", None)
             pullrequest = kwargs.get("pullrequest", None)
-            update_redmine_issues(pullrequest, issues, data)
+            commits = kwargs.get("commits", None)
+            update_redmine_issues(pullrequest, commits, issues, data)
 

@@ -61,6 +61,7 @@ class Corgi(Base):
         )
 
         from impl import get_pullrequest
+        from impl import get_commits_from_pr
         from impl import get_issues_from_pr
         from impl import update_pr_description
         from corgi_loves_redmine.handler import GET_ISSUE_TITLES
@@ -75,9 +76,12 @@ class Corgi(Base):
             titles = []
             GET_ISSUE_TITLES.send(self, issues=issues, titles=titles)
             update_pr_description(pullrequest, issues, titles)
+            commits = get_commits_from_pr(pullrequest)
 
             PULL_REQUEST.send("github",
                               pull_request=pullrequest,
+                              commits=commits,
+                              issues=issues,
                               data=data)
         except:
             self.logger.exception("Exception updating cross-links")

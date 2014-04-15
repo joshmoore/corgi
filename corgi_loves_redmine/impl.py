@@ -51,7 +51,7 @@ def create_tree_url(data, head_or_base='head'):
     return url
 
 
-def create_issue_update(pullrequest, data):
+def create_issue_update(pullrequest, commits, data):
 
     def make_past_tense(verb):
         if not verb.endswith('d'):
@@ -59,7 +59,7 @@ def create_issue_update(pullrequest, data):
         return verb
 
     loader = tornado.template.Loader(
-        os.path.join(os.path.dirname(__file__), 'templates')
+        os.path.join(os.path.dirname(__file__), '..', 'templates')  # TODO
     )
     template = loader.load('updated_pull_request.textile')
     return template.generate(
@@ -67,7 +67,7 @@ def create_issue_update(pullrequest, data):
         head_url=create_tree_url(data, 'head'),
         base_url=create_tree_url(data, 'base'),
         make_past_tense=make_past_tense,
-        commits=get_commits_from_pr(pullrequest),
+        commits=commits,
     )
 
 
@@ -80,7 +80,7 @@ def get_issue_titles(issues):
     return titles
 
 
-def update_redmine_issues(pullrequest, issues, data):
+def update_redmine_issues(pullrequest, commits, issues, data):
     if not issues:
         logging.info("No issues found")
     else:
@@ -100,7 +100,7 @@ def update_redmine_issues(pullrequest, issues, data):
     if data['action'] == 'closed' and data['pull_request']['merged']:
         data['action'] = 'merged'
     status = config.get('redmine.status.on-pr-%s' % data['action'])
-    update_message = create_issue_update(pullrequest, data)
+    update_message = create_issue_update(pullrequest, commits, data)
     logging.debug(update_message)
 
     if not config.get('dry-run'):
