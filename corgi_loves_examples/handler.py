@@ -42,5 +42,5 @@ class Corgi(Base):
     def name(self):
         return "examples"
 
-    def receive(self, kwargs):
-        pass
+    def receive_data(self, kwargs):
+        self.logger.info("from %s", self.sender(kwargs))

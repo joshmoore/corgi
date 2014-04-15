@@ -45,21 +45,25 @@ class Corgi(object):
     """
 
     def __init__(self):
+
         try:
             name = self.name()
         except:
             name = "base"
+
         self.logger = logging.getLogger("corgi.%s" % name)
-        self.logger.info("Registering...")
-        ReceivedDataSignal.connect(self)
-        InitializedSignal.connect(self)
+        ReceivedDataSignal.connect(self.receive_data)
+        InitializedSignal.connect(self.initialized)
+        self.logger.info("Registered")
+
+    def sender(self, kwargs):
+        return kwargs.get("_sender", "unknown")
 
     def name(self):
         raise Exception("Must be implemented!")
 
-    def __call__(self, kwargs):
-        self.logger.info(kwargs)
-        self.receive(kwargs)
+    def initialized(self, kwargs):
+        self.logger.info("Ready")
 
-    def receive(self, kwargs):
+    def receive_data(self, kwargs):
         raise Exception("Must be implemeneted!")
