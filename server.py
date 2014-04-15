@@ -37,7 +37,6 @@ import tornado.web
 import tornado.template
 
 from corgi_loves import INITIALIZED
-from corgi_loves import RECEIVE_DATA
 from corgi_loves import bark_corgi_bark
 from corgi_loves import register_corgis
 

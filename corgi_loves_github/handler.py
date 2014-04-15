@@ -37,12 +37,11 @@ import logging
 import github
 
 from corgi_loves import Corgi as Base
-from corgi_loves import RECEIVE_DATA
 from blinker import signal
 
 logger = logging.getLogger('corgi.github')
 
-
+RECEIVE_DATA = signal("omero.data.github")
 PULL_REQUEST = signal("omero.github.pull_request")
 HEADER = '### Referenced Issues:'
 
@@ -126,7 +125,7 @@ class Corgi(Base):
 
     def initialize(self, sender, paths=None, **kwargs):
         super(Corgi, self).initialize(sender, paths=paths, **kwargs)
-        paths[r"/event/github"] = self.new_handler(RECEIVE_DATA)
+        self.register(RECEIVE_DATA, paths=paths)
 
     def handle(self, data):
 

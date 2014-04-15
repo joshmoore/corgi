@@ -33,10 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from blinker import signal
 from corgi_loves import AbstractException
-from corgi_loves import RECEIVE_DATA
 from corgi_loves import Corgi as Base
 
 
+RECEIVE_DATA = signal("omero.data.examples")
 OTHER_EXAMPLES = signal("corgi.other-example")
 
 
@@ -50,7 +50,7 @@ class Common(Base):
 
     def initialize(self, sender, paths=None, **kwargs):
         super(Common, self).initialize(sender, paths=paths, **kwargs)
-        paths[r"/event/%s" % self.name()] = self.new_handler(RECEIVE_DATA)
+        self.register(RECEIVE_DATA, paths=paths)
 
     def receive(self, sender, sig=None, **kwargs):
         if sig is RECEIVE_DATA:

@@ -41,8 +41,6 @@ import logging
 from blinker import signal
 
 
-RECEIVE_DATA = signal("corgi.base.receive-data")
-
 INITIALIZED = signal("corgi.base.initialized")
 
 
@@ -69,7 +67,6 @@ class Corgi(object):
         self.methods = dict()
         self.stack = []
         self.logger = logging.getLogger("corgi.%s" % name)
-        self.register(RECEIVE_DATA)
         INITIALIZED.connect(self.initialize)
         self.logger.info("Registered")
 
@@ -90,7 +87,7 @@ class Corgi(object):
 
         return EventHandler
 
-    def register(self, sig):
+    def register(self, sig, paths=None):
         name = sig.name
         if name in self.methods:
             raise Exception("Already registered")
@@ -107,6 +104,11 @@ class Corgi(object):
 
         self.methods[name] = method
         sig.connect(method)
+
+        # If we've been provided paths for mounting
+        # then add a handler.
+        if paths is not None:
+            paths[r"/event/%s" % self.name()] = self.new_handler(sig)
 
     def receive(self, sender, **kwargs):
         raise Exception("must be implemented!")
