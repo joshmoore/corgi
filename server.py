@@ -40,8 +40,6 @@ import tornado.template
 
 from jenkinsapi.jenkins import Jenkins
 
-import github
-
 from corgi import Corgi
 from config import config
 from collections import defaultdict
