@@ -37,8 +37,6 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
-from blinker import signal
-
 from corgi_loves import AbstractException
 from corgi_loves import Corgi
 from corgi_loves import INITIALIZED
@@ -90,7 +88,7 @@ def main():
                 try:
                     obj = getattr(mod.handler, objname)
                     if issubclass(obj, Corgi) and obj != Corgi:
-                        corgi = obj()
+                        obj()  # Self-registration
                 except AbstractException:
                     continue
                 except AttributeError:
@@ -99,7 +97,7 @@ def main():
                     continue
         except:
             logger.error('No corgi handler found: ' + modname,
-                      exc_info=('debug' in config))
+                         exc_info=('debug' in config))
 
     INITIALIZED.send("server", message="ready")
 
