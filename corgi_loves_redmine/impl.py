@@ -68,6 +68,15 @@ def create_issue_update(pullrequest, data):
     )
 
 
+def get_issue_titles(issues):
+    corgi = RedmineConnection(config['redmine.url'], config['redmine.auth_key'])
+    titles = dict()
+    if corgi.connected:
+        for issue in issues:
+            titles[issue] = corgi.get_issue_title(issue)
+    return titles
+
+
 def update_redmine_issues(pullrequest, data):
     issues = get_issues_from_pr(pullrequest)
     if not issues:
@@ -78,7 +87,7 @@ def update_redmine_issues(pullrequest, data):
         )
 
     if issues and not config.get('dry-run'):
-        c = Corgi(
+        c = RedmineConnection(
             config['redmine.url'], config['redmine.auth_key'],
             config.get('user.mapping.%s' % data['sender']['login'])
         )

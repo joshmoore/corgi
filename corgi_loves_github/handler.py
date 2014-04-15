@@ -62,6 +62,7 @@ class Corgi(Base):
 
         from impl import get_pullrequest
         from impl import update_pr_description
+        from corgi_loves_redmine.handler import GET_ISSUE_TITLES
 
         try:
             pullrequest = get_pullrequest(
@@ -69,7 +70,10 @@ class Corgi(Base):
                 data['pull_request']['number']
             )
 
-            update_pr_description(pullrequest)
+            issues = get_issues_from_pr(pullrequest)
+            titles = []
+            GET_ISSUE_TITLES.send(self, issues=issues, titles=titles)
+            update_pr_description(pullrequest, issues, titles)
 
             PULL_REQUEST.send("github",
                               pull_request=pullrequest,

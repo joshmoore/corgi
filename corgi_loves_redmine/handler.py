@@ -30,15 +30,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+from blinker import signal
 from corgi_loves import Corgi as Base
-from corgi_loves_github.handler import PULL_REQUEST
+
+
+GET_ISSUE_TITLES = signal("corgi.redmine.get_issue_titles")
 
 
 class Corgi(Base):
 
     def __init__(self):
+        from corgi_loves_github.handler import PULL_REQUEST
         super(Corgi, self).__init__()
         self.register(PULL_REQUEST)
+        self.register(GET_ISSUE_TITLES)
 
     def name(self):
         return "redmine"
+
+    def retrieve(self, sender, **kwargs):
+        from corgi_loves_redmine.impl import get_issue_titles
+        issues = kwargs.get("issues", [])
+        titles = kwargs.get("titles", [])
+        titles.extend(get_issue_titles(issues))

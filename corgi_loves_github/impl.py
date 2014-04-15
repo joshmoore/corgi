@@ -37,6 +37,7 @@ import github
 
 from config import config
 
+
 logger = logging.getLogger('corgi.github.impl')
 
 HEADER = '### Referenced Issues:'
@@ -63,23 +64,12 @@ def get_issues_from_pr(pullrequest):
     return sorted(set(map(int, re.findall(r'\bgs-(\d+)', ' '.join(text)))))
 
 
-def get_issue_titles(issues):
-    corgi = Corgi(config['redmine.url'], config['redmine.auth_key'])
-    titles = dict()
-    if corgi.connected:
-        for issue in issues:
-            titles[issue] = corgi.get_issue_title(issue)
-    return titles
-
-
-def update_pr_description(pullrequest):
+def update_pr_description(pullrequest, issues, titles):
     logger.info(
         'Updating PR description for %s PR %s' %
             (pullrequest.base.repo.full_name, pullrequest.number)
     )
     body = pullrequest.body
-    issues = get_issues_from_pr(pullrequest)
-    titles = get_issue_titles(issues)
     links = list()
     for issue in issues:
         link = '* [Issue %s: %s](%sissues/%s)' % (
