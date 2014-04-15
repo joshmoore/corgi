@@ -36,6 +36,7 @@ import copy
 import os
 
 from corgi_loves import Corgi as Base
+from corgi_loves_github.handler import PULL_REQUEST
 from redmine import Redmine
 
 
@@ -159,6 +160,7 @@ class Corgi(Base):
         established, and you will have to call connect() yourself.
         """
         super(Corgi, self).__init__()
+        self.register(PULL_REQUEST)
         self.connected = False
         self._serverURL = None
         self._authKey = None

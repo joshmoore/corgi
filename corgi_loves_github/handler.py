@@ -39,10 +39,12 @@ import tornado
 import simplejson
 
 from corgi_loves import Corgi as Base
+from blinker import signal
 
 logger = logging.getLogger('corgi.github')
 
 
+PULL_REQUEST = signal("omero.github.pull_request")
 HEADER = '### Referenced Issues:'
 
 
@@ -127,7 +129,7 @@ class Corgi(Base):
 
         def post(self):
             data = simplejson.loads(self.request.body)
-            RECEIVE_DATA.send("server", **data)
+            self.handle(data)
 
     def initialize(self, sender, paths=None, **kwargs):
         super(Corgi, self).initialize(sender, paths=paths, **kwargs)
@@ -144,12 +146,10 @@ class Corgi(Base):
                 data['repository']['full_name'],
                 data['pull_request']['number']
             )
-
-            # Update Redmine issues
-            update_redmine_issues(pullrequest, data)
-
-            # Update PR description
             update_pr_description(pullrequest)
         except:
-            # Likely Github connection problems, log and continue
-            logging.exception("Exception updating cross-links")
+            self.logger.exception("Exception updating cross-links")
+
+        PULL_REQUEST.send("github",
+                          pull_request=pullrequest,
+                          data=data)
