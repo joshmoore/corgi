@@ -35,8 +35,11 @@ import logging
 import copy
 import os
 
+from config import config
 from redmine import Redmine
 
+
+logger = logging.getLogger("corgi.redmine.impl")
 
 
 def create_tree_url(data, head_or_base='head'):
