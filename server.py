@@ -52,19 +52,6 @@ from logging.handlers import WatchedFileHandler
 log = logging.getLogger('server')
 
 
-def run_jenkins_job(job):
-    jenkins = Jenkins(config['jenkins.url'],
-                      username=config['jenkins.username'],
-                      password=config['jenkins.password'])
-    if job in jenkins:
-        logging.debug('Invoking Jenkins job %s' % job)
-        if not config.get('dry-run'):
-            jenkins[job].invoke()
-    else:
-        logging.error('Jenkins job %s not found' % job)
-        logging.debug('Available Jenkins jobs: %s' % ', ' % jenkins.keys())
-
-
 def get_pullrequest(repo_name, pr_number):
     gh = github.Github(config['git.token'])
     repo = gh.get_repo(repo_name)

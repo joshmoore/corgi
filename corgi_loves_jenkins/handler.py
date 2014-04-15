@@ -38,6 +38,19 @@ from corgi import Corgi as Base
 logger = logging.getLogger('corgi.jenkins')
 
 
+def run_jenkins_job(job):
+    jenkins = Jenkins(config['jenkins.url'],
+                      username=config['jenkins.username'],
+                      password=config['jenkins.password'])
+    if job in jenkins:
+        logging.debug('Invoking Jenkins job %s' % job)
+        if not config.get('dry-run'):
+            jenkins[job].invoke()
+    else:
+        logging.error('Jenkins job %s not found' % job)
+        logging.debug('Available Jenkins jobs: %s' % ', ' % jenkins.keys())
+
+
 class Corgi(Base):
 
     def handle(self, data):
