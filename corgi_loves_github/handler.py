@@ -67,10 +67,12 @@ class Corgi(Base):
                 kwargs['repository']['full_name'],
                 kwargs['pull_request']['number']
             )
+
             update_pr_description(pullrequest)
+
+            PULL_REQUEST.send("github",
+                              pull_request=pullrequest,
+                              kwargs=kwargs)
         except:
             self.logger.exception("Exception updating cross-links")
 
-        PULL_REQUEST.send("github",
-                          pull_request=pullrequest,
-                          kwargs=kwargs)

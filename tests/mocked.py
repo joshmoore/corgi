@@ -43,8 +43,6 @@ from blinker import signal
 from configobj import ConfigObj
 
 
-
-
 configfile = os.path.join(os.path.dirname(__file__), '..', 'server.cfg')
 datadir = os.path.join(os.path.dirname(__file__), 'data')
 

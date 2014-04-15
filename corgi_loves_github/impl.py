@@ -32,10 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import re
-import config
 import logging
 import github
 
+from config import config
 
 logger = logging.getLogger('corgi.github.impl')
 
