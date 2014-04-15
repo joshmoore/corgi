@@ -43,9 +43,9 @@ class Common(object):
         super(Common, self).__init__()
         OtherExampleSignal.connect(self)
 
-    def receive_data(self, kwargs):
-        self.logger.info("from %s", self.sender(kwargs))
-        OtherExampleSignal.send(kwargs)
+    def receive_data(self, sernder, **kwargs):
+        self.logger.info("<--%s", sender)
+        OtherExampleSignal.send(self.name(), **kwargs)
 
 
 class Example1(Common, Base):

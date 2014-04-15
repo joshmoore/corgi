@@ -56,14 +56,11 @@ class Corgi(object):
         signal(INITIALIZED).connect(self.initialized)
         self.logger.info("Registered")
 
-    def sender(self, kwargs):
-        return kwargs.get("_sender", "unknown")
-
     def name(self):
         raise Exception("Must be implemented!")
 
-    def initialized(self, kwargs):
+    def initialized(self, sender, **kwargs):
         self.logger.info("Ready")
 
-    def receive_data(self, kwargs):
+    def receive_data(self, sender, **kwargs):
         raise Exception("Must be implemeneted!")

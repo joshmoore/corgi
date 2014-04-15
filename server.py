@@ -55,8 +55,7 @@ class EventHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = simplejson.loads(self.request.body)
-        data["_sender"] = "server"
-        signal(RECEIVE_DATA).send(data)
+        signal(RECEIVE_DATA).send("server", **data)
 
 
 def main():
@@ -99,7 +98,7 @@ def main():
             logger.error('No corgi handler found: ' + modname,
                       exc_info=('debug' in config))
 
-    signal(INITIALIZED).send({"_sender": "server"})
+    signal(INITIALIZED).send("server", message="ready")
 
     application = tornado.web.Application([
         (r"/event", EventHandler),
