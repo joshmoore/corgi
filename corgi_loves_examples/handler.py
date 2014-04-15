@@ -36,7 +36,7 @@ from corgi_loves import AbstractException
 from corgi_loves import Corgi as Base
 
 
-RECEIVE_DATA = signal("omero.data.examples")
+RECEIVE_DATA = signal("corgi.data.examples")
 OTHER_EXAMPLES = signal("corgi.other-example")
 
 
