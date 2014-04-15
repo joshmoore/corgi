@@ -1,6 +1,6 @@
 USER=knabar
 REPO=stick/redmine-scm-integration
-CALLBACK=http://envy.glencoesoftware.com:19090/event
+CALLBACK=http://envy.glencoesoftware.com:19090/event/github
 
 curl -u $USER -i \
   https://api.github.com/hub \

@@ -31,6 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+import tornado
+import simplejson
+
 from blinker import signal
 from corgi_loves import AbstractException
 from corgi_loves import RECEIVE_DATA
@@ -42,11 +45,21 @@ OTHER_EXAMPLES = signal("corgi.other-example")
 
 class Common(Base):
 
+    class EventHandler(tornado.web.RequestHandler):
+
+        def post(self):
+            data = simplejson.loads(self.request.body)
+            RECEIVE_DATA.send("server", **data)
+
     def __init__(self):
         if self.__class__ == Common:
             raise AbstractException("abstract")
         super(Common, self).__init__()
         self.register(OTHER_EXAMPLES)
+
+    def initialize(self, sender, paths=None, **kwargs):
+        super(Common, self).initialize(sender, paths=paths, **kwargs)
+        paths[r"/event/%s" % self.name()] = self.EventHandler
 
     def receive(self, sender, sig=None, **kwargs):
         if sig is RECEIVE_DATA:

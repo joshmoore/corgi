@@ -35,6 +35,8 @@ import re
 import config
 import logging
 import github
+import tornado
+import simplejson
 
 from corgi_loves import Corgi as Base
 
@@ -120,6 +122,16 @@ def update_pr_description(pullrequest):
 
 
 class Corgi(Base):
+
+    class EventHandler(tornado.web.RequestHandler):
+
+        def post(self):
+            data = simplejson.loads(self.request.body)
+            RECEIVE_DATA.send("server", **data)
+
+    def initialize(self, sender, paths=None, **kwargs):
+        super(Corgi, self).initialize(sender, paths=paths, **kwargs)
+        paths[r"/event/github"] = self.EventHandler
 
     def handle(self, data):
 

@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import sys
-import simplejson
 import logging
 
 import tornado.httpserver
@@ -47,13 +46,6 @@ from config import config
 logger = logging.getLogger('server')
 
 
-class EventHandler(tornado.web.RequestHandler):
-
-    def post(self):
-        data = simplejson.loads(self.request.body)
-        RECEIVE_DATA.send("server", **data)
-
-
 def main():
     bark_corgi_bark(config)
     settings = {
@@ -68,11 +60,15 @@ def main():
 
     handlers = config['server.handlers']
     settings["instances"] = register_corgis(handlers, "debug" in config)
-    INITIALIZED.send("server", message="ready")
 
-    application = tornado.web.Application([
-        (r"/event", EventHandler),
-    ], **settings)
+    # Allows each app to register itself
+    paths = dict()
+    INITIALIZED.send("server", paths=paths)
+    paths = paths.items()
+    for k, v in paths:
+        logger.info("Registered %s", k)
+
+    application = tornado.web.Application(paths, **settings)
 
     if config.get('dry-run'):
         logger.info('In dry-run mode')

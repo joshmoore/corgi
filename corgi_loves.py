@@ -68,11 +68,15 @@ class Corgi(object):
         self.stack = []
         self.logger = logging.getLogger("corgi.%s" % name)
         self.register(RECEIVE_DATA)
-        self.register(INITIALIZED)
+        INITIALIZED.connect(self.initialize)
         self.logger.info("Registered")
 
     def name(self):
         raise Exception("Must be implemented!")
+
+    def initialize(self, sender, paths=None, **kwargs):
+        if paths is None:
+            self.logger.warn("Paths None")
 
     def register(self, sig):
         name = sig.name
