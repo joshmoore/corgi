@@ -80,6 +80,7 @@ def main():
     port = int(config['server.socket_port'])
 
     handlers = config['server.handlers']
+    instances = []
     for handler in handlers:
         try:
             modname = "corgi_loves_%s.handler" % handler
@@ -88,7 +89,7 @@ def main():
                 try:
                     obj = getattr(mod.handler, objname)
                     if issubclass(obj, Corgi) and obj != Corgi:
-                        obj()  # Self-registration
+                        instances.append(obj())
                 except AbstractException:
                     continue
                 except AttributeError:

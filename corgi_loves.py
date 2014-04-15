@@ -60,6 +60,8 @@ class Corgi(object):
         except:
             name = "base"
 
+        self.methods = dict()
+        self.stack = []
         self.logger = logging.getLogger("corgi.%s" % name)
         self.register(RECEIVE_DATA)
         self.register(INITIALIZED)
@@ -69,8 +71,21 @@ class Corgi(object):
         raise Exception("Must be implemented!")
 
     def register(self, sig):
+        name = sig.name
+        if name in self.methods:
+            raise Exception("Already registered")
+
         def method(sender, **kwargs):
-            self.receive(sender, sig=sig, **kwargs)
+            if sender == self.name():
+                # Skip own messages
+                return
+            elif self in self.stack:
+                self.logger.warn("Recursive!")
+            else:
+                self.stack.append(self)
+                self.receive(sender, sig=sig, **kwargs)
+
+        self.methods[name] = method
         sig.connect(method)
 
     def receive(self, sender, **kwargs):
