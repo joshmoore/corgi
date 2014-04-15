@@ -213,24 +213,7 @@ class EventHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = simplejson.loads(self.request.body)
-        logging.info(
-            "Received event for PR %s" % data['pull_request']['number']
-        )
-
-        try:
-            pullrequest = get_pullrequest(
-                data['repository']['full_name'],
-                data['pull_request']['number']
-            )
-
-            # Update Redmine issues
-            update_redmine_issues(pullrequest, data)
-
-            # Update PR description
-            update_pr_description(pullrequest)
-        except:
-            # Likely Github or Redmine connection problems, log and continue
-            logging.exception("Exception updating cross-links")
+        # HANDLE EACH
 
         # Trigger jenkins jobs
         jobs = config.get(
