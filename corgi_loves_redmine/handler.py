@@ -38,6 +38,67 @@ from redmine import Redmine
 logger = logging.getLogger('corgi.redmine')
 
 
+def create_tree_url(data, head_or_base='head'):
+    ref = data['pull_request'][head_or_base]['ref']
+    url = '%s/tree/%s' % (
+        data['pull_request'][head_or_base]['repo']['html_url'],
+        ref
+    )
+    return url
+
+
+def create_issue_update(pullrequest, data):
+
+    def make_past_tense(verb):
+        if not verb.endswith('d'):
+            return verb + 'd'
+        return verb
+
+    loader = tornado.template.Loader(
+        os.path.join(os.path.dirname(__file__), 'templates')
+    )
+    template = loader.load('updated_pull_request.textile')
+    return template.generate(
+        data=data,
+        head_url=create_tree_url(data, 'head'),
+        base_url=create_tree_url(data, 'base'),
+        make_past_tense=make_past_tense,
+        commits=get_commits_from_pr(pullrequest),
+    )
+
+
+def update_redmine_issues(pullrequest, data):
+    issues = get_issues_from_pr(pullrequest)
+    if not issues:
+        logging.info("No issues found")
+    else:
+        logging.info(
+            "Updating Redmine issues %s" % ", ".join(map(str, issues))
+        )
+
+    if issues and not config.get('dry-run'):
+        c = Corgi(
+            config['redmine.url'], config['redmine.auth_key'],
+            config.get('user.mapping.%s' % data['sender']['login'])
+        )
+        if not c.connected:
+            logging.error("Connection to Redmine failed")
+            return
+
+    if data['action'] == 'closed' and data['pull_request']['merged']:
+        data['action'] = 'merged'
+    status = config.get('redmine.status.on-pr-%s' % data['action'])
+    update_message = create_issue_update(pullrequest, data)
+    logging.debug(update_message)
+
+    if not config.get('dry-run'):
+        for issue in issues:
+            c.update_issue(issue, update_message, status)
+            logging.info("Added comment to issue %s" % issue)
+
+
+
+
 class RedmineServerUnset(Exception):
 
     def __init__(self, value):
