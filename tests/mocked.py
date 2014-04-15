@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
 
 :author: Josh Moore <josh@glencoesoftware.com>
 
-Glue between Github issues and Redmine
+Test for Corgi
 Copyright (C) 2014 Glencoe Software, Inc.
 All rights reserved.
 
@@ -30,15 +31,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-from corgi_loves import Corgi as Base
-from corgi_loves_github.handler import PULL_REQUEST
+import os
+import json
+
+from corgi_loves import bark_corgi_bark
+from corgi_loves import register_corgis
+from corgi_loves import INITIALIZED
+from corgi_loves_github.handler import RECEIVE_DATA as GH_DATA
+
+from blinker import signal
+from configobj import ConfigObj
 
 
-class Corgi(Base):
 
-    def __init__(self):
-        super(Corgi, self).__init__()
-        self.register(PULL_REQUEST)
 
-    def name(self):
-        return "redmine"
+configfile = os.path.join(os.path.dirname(__file__), '..', 'server.cfg')
+datadir = os.path.join(os.path.dirname(__file__), 'data')
+
+config = ConfigObj(configfile, interpolation=False, file_error=True)
+bark_corgi_bark(config)
+instances = register_corgis(["github", "redmine"], debug=True)
+
+INITIALIZED.send("mocked", paths={})
+
+with open(os.path.join(datadir, "step1-open.json"), "r") as f:
+    step1_open = json.load(f)
+
+sender = step1_open.pop("sender")
+step1_open["orig_sender"] = sender
+GH_DATA.send("mocked", **step1_open)

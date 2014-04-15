@@ -35,6 +35,8 @@ from logging import StreamHandler
 from logging.handlers import WatchedFileHandler
 
 import tornado
+import tornado.web
+
 import simplejson
 import logging
 
@@ -67,8 +69,8 @@ class Corgi(object):
         self.methods = dict()
         self.stack = []
         self.logger = logging.getLogger("corgi.%s" % name)
+        self.logger.info("Waiting on initialization")
         INITIALIZED.connect(self.initialize)
-        self.logger.info("Registered")
 
     def name(self):
         raise Exception("Must be implemented!")
@@ -76,6 +78,7 @@ class Corgi(object):
     def initialize(self, sender, paths=None, **kwargs):
         if paths is None:
             self.logger.warn("Paths None")
+        self.logger.info("Initialization done")
 
     def new_handler(self, signal):
 

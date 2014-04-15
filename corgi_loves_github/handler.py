@@ -44,14 +44,19 @@ PULL_REQUEST = signal("corgi.github.pull_request")
 
 class Corgi(Base):
 
+    def __init__(self):
+        super(Corgi, self).__init__()
+
     def initialize(self, sender, paths=None, **kwargs):
         super(Corgi, self).initialize(sender, paths=paths, **kwargs)
         self.register(RECEIVE_DATA, paths=paths)
 
-    def handle(self, data):
+    def name(self):
+        return "github"
 
+    def receive(self, sender, **kwargs):
         self.logger.info(
-            "Received event for PR %s" % data['pull_request']['number']
+            "Received event for PR %s" % kwargs['pull_request']['number']
         )
 
         from impl import get_pullrequest
@@ -59,8 +64,8 @@ class Corgi(Base):
 
         try:
             pullrequest = get_pullrequest(
-                data['repository']['full_name'],
-                data['pull_request']['number']
+                kwargs['repository']['full_name'],
+                kwargs['pull_request']['number']
             )
             update_pr_description(pullrequest)
         except:
@@ -68,4 +73,4 @@ class Corgi(Base):
 
         PULL_REQUEST.send("github",
                           pull_request=pullrequest,
-                          data=data)
+                          kwargs=kwargs)
