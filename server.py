@@ -198,7 +198,7 @@ def main():
     handlers = config['server.handlers']
     for handler in handlers:
         try:
-            modname = "corgi_love_%s.handler" % handler
+            modname = "corgi_loves_%s.handler" % handler
             mod = __import__(modname, "handler")
             corgi = getattr(mod.handler, "Corgi")()
         except:
