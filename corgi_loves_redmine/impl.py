@@ -77,8 +77,7 @@ def get_issue_titles(issues):
     return titles
 
 
-def update_redmine_issues(pullrequest, data):
-    issues = get_issues_from_pr(pullrequest)
+def update_redmine_issues(pullrequest, issues, data):
     if not issues:
         logging.info("No issues found")
     else:

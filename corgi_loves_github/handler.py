@@ -61,6 +61,7 @@ class Corgi(Base):
         )
 
         from impl import get_pullrequest
+        from impl import get_issues_from_pr
         from impl import update_pr_description
         from corgi_loves_redmine.handler import GET_ISSUE_TITLES
 

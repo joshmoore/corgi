@@ -48,8 +48,16 @@ class Corgi(Base):
     def name(self):
         return "redmine"
 
-    def retrieve(self, sender, **kwargs):
-        from corgi_loves_redmine.impl import get_issue_titles
+    def receive(self, sender, sig=None, **kwargs):
+        from corgi_loves_github.handler import PULL_REQUEST
         issues = kwargs.get("issues", [])
-        titles = kwargs.get("titles", [])
-        titles.extend(get_issue_titles(issues))
+        if sig == GET_ISSUE_TITLES:
+            from corgi_loves_redmine.impl import get_issue_titles
+            titles = kwargs.get("titles", [])
+            titles.extend(get_issue_titles(issues))
+        elif sig == PULL_REQUEST:
+            from corgi_loves_redmine.impl import update_redmine_issues
+            data = kwargs.get("data", None)
+            pullrequest = kwargs.get("pullrequest", None)
+            update_redmine_issues(pullrequest, issues, data)
+
