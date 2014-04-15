@@ -33,9 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import logging
 import copy
 
+from corgi_loves import Corgi as Base
 from redmine import Redmine
 
-logger = logging.getLogger('corgi.redmine')
 
 
 def create_tree_url(data, head_or_base='head'):
@@ -138,7 +138,7 @@ class RedmineNotConnected(Exception):
         return repr("Not connected to Redmine server- %s" % self.value)
 
 
-class Corgi(object):
+class Corgi(Base):
     """
     Simple interaction with a Redmine server.
 
@@ -156,6 +156,7 @@ class Corgi(object):
         If serverURL or authKey are omitted, no connection will be
         established, and you will have to call connect() yourself.
         """
+        super(Corgi, self).__init__()
         self.connected = False
         self._serverURL = None
         self._authKey = None
