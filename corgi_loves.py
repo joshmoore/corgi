@@ -34,9 +34,9 @@ import logging
 
 from blinker import signal
 
-ReceivedDataSignal = signal("corgi.base.receive-data")
+RECEIVE_DATA = "corgi.base.receive-data"
 
-InitializedSignal = signal("corgi.base.initialized")
+INITIALIZED = "corgi.base.initialized"
 
 
 class Corgi(object):
@@ -52,8 +52,8 @@ class Corgi(object):
             name = "base"
 
         self.logger = logging.getLogger("corgi.%s" % name)
-        ReceivedDataSignal.connect(self.receive_data)
-        InitializedSignal.connect(self.initialized)
+        signal(RECEIVE_DATA).connect(self.receive_data)
+        signal(INITIALIZED).connect(self.initialized)
         self.logger.info("Registered")
 
     def sender(self, kwargs):

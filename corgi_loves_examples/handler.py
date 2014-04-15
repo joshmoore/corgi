@@ -34,13 +34,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from blinker import signal
 from corgi_loves import Corgi as Base
 
-class Corgi(Base):
+OtherExampleSignal = signal("corgi.other-example")
+
+
+class Common(object):
 
     def __init__(self):
-        super(Corgi, self).__init__()
-
-    def name(self):
-        return "examples"
+        super(Common, self).__init__()
+        OtherExampleSignal.connect(self)
 
     def receive_data(self, kwargs):
         self.logger.info("from %s", self.sender(kwargs))
+        OtherExampleSignal.send(kwargs)
+
+
+class Example1(Common, Base):
+
+    def name(self):
+        return "example1"
+
+
+class Example2(Common, Base):
+
+    def name(self):
+        return "example2"

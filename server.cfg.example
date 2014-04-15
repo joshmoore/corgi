@@ -16,7 +16,7 @@ server.handlers = "examples",
 # server.handlers = "redmine", "github", "trac", "phpbb", "qa2", "jenkins", "travis", "trello", "mailman"
 
 # Tornado Web debugging
-# debug = "yes"
+debug = "yes"
 
 # Don't actually do anything
 # dry-run = "yes"
