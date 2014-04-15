@@ -34,6 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from logging import StreamHandler
 from logging.handlers import WatchedFileHandler
 
+import tornado
+import simplejson
 import logging
 
 from blinker import signal
@@ -77,6 +79,16 @@ class Corgi(object):
     def initialize(self, sender, paths=None, **kwargs):
         if paths is None:
             self.logger.warn("Paths None")
+
+    def new_handler(self, signal):
+
+        class EventHandler(tornado.web.RequestHandler):
+
+            def post(self):
+                data = simplejson.loads(self.request.body)
+                signal.send("server", **data)
+
+        return EventHandler
 
     def register(self, sig):
         name = sig.name

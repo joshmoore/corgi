@@ -35,10 +35,9 @@ import re
 import config
 import logging
 import github
-import tornado
-import simplejson
 
 from corgi_loves import Corgi as Base
+from corgi_loves import RECEIVE_DATA
 from blinker import signal
 
 logger = logging.getLogger('corgi.github')
@@ -125,15 +124,9 @@ def update_pr_description(pullrequest):
 
 class Corgi(Base):
 
-    class EventHandler(tornado.web.RequestHandler):
-
-        def post(self):
-            data = simplejson.loads(self.request.body)
-            self.handle(data)
-
     def initialize(self, sender, paths=None, **kwargs):
         super(Corgi, self).initialize(sender, paths=paths, **kwargs)
-        paths[r"/event/github"] = self.EventHandler
+        paths[r"/event/github"] = self.new_handler(RECEIVE_DATA)
 
     def handle(self, data):
 
