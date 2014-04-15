@@ -34,9 +34,17 @@ import logging
 
 from blinker import signal
 
-RECEIVE_DATA = "corgi.base.receive-data"
+RECEIVE_DATA = signal("corgi.base.receive-data")
 
-INITIALIZED = "corgi.base.initialized"
+INITIALIZED = signal("corgi.base.initialized")
+
+
+class AbstractException(Exception):
+    """
+    To be thrown be implementations which are
+    solely useful in the class hierarchy.
+    """
+    pass
 
 
 class Corgi(object):
@@ -52,15 +60,17 @@ class Corgi(object):
             name = "base"
 
         self.logger = logging.getLogger("corgi.%s" % name)
-        signal(RECEIVE_DATA).connect(self.receive_data)
-        signal(INITIALIZED).connect(self.initialized)
+        self.register(RECEIVE_DATA)
+        self.register(INITIALIZED)
         self.logger.info("Registered")
 
     def name(self):
         raise Exception("Must be implemented!")
 
-    def initialized(self, sender, **kwargs):
-        self.logger.info("Ready")
+    def register(self, sig):
+        def method(sender, **kwargs):
+            self.receive(sender, sig=sig, **kwargs)
+        sig.connect(method)
 
-    def receive_data(self, sender, **kwargs):
-        raise Exception("Must be implemeneted!")
+    def receive(self, sender, **kwargs):
+        raise Exception("must be implemented!")

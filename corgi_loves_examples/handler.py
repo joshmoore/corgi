@@ -32,18 +32,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from blinker import signal
+from corgi_loves import AbstractException
 from corgi_loves import Corgi as Base
 
 OtherExampleSignal = signal("corgi.other-example")
 
 
-class Common(object):
+class Common(Base):
 
     def __init__(self):
+        if self.__class__ == Common:
+            raise AbstractException("abstract")
         super(Common, self).__init__()
         OtherExampleSignal.connect(self)
 
-    def receive_data(self, sernder, **kwargs):
+    def receive(self, sender, sig=None, **kwargs):
         self.logger.info("<--%s", sender)
         OtherExampleSignal.send(self.name(), **kwargs)
 

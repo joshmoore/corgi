@@ -39,6 +39,7 @@ import tornado.template
 
 from blinker import signal
 
+from corgi_loves import AbstractException
 from corgi_loves import Corgi
 from corgi_loves import INITIALIZED
 from corgi_loves import RECEIVE_DATA
@@ -55,7 +56,7 @@ class EventHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = simplejson.loads(self.request.body)
-        signal(RECEIVE_DATA).send("server", **data)
+        RECEIVE_DATA.send("server", **data)
 
 
 def main():
@@ -88,8 +89,10 @@ def main():
             for objname in dir(mod.handler):
                 try:
                     obj = getattr(mod.handler, objname)
-                    if issubclass(obj, Corgi):
+                    if issubclass(obj, Corgi) and obj != Corgi:
                         corgi = obj()
+                except AbstractException:
+                    continue
                 except AttributeError:
                     continue
                 except TypeError:
@@ -98,7 +101,7 @@ def main():
             logger.error('No corgi handler found: ' + modname,
                       exc_info=('debug' in config))
 
-    signal(INITIALIZED).send("server", message="ready")
+    INITIALIZED.send("server", message="ready")
 
     application = tornado.web.Application([
         (r"/event", EventHandler),
