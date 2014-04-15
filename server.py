@@ -38,7 +38,11 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
+from blinker import signal
+
 from corgi import Corgi
+from corgi import InitializedSignal
+
 from config import config
 from collections import defaultdict
 
@@ -152,7 +156,10 @@ def get_issue_titles(issues):
 
 class EventHandler(tornado.web.RequestHandler):
 
-    def initialize(self, settings):
+    receive_data = signal('receive_data')
+
+    def initialize(self, **kwargs):
+        print kwargs
         self.settings = settings
         self.handlers = dict()
         for k, v in self.settings.items():
@@ -162,7 +169,7 @@ class EventHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = simplejson.loads(self.request.body)
-        # HANDLE EACH
+        receive_data.send(data)
 
 
 def main():
@@ -178,6 +185,7 @@ def main():
     root_logger.addHandler(handler)
 
     settings = {
+        "handlers": {},
     }
 
     if 'debug' in config:
@@ -192,15 +200,17 @@ def main():
         try:
             modname = "corgi_love_%s.handler" % handler
             mod = __import__(modname, "handler")
-            corgi = getattr(mod.handler, "Corgi")
+            corgi = getattr(mod.handler, "Corgi")()
         except:
-            log.error('No corgi handler found: ' + modname)
+            log.error('No corgi handler found: ' + modname,
+                      exc_info=('debug' in config))
             continue
-        settings[handler] = corgi
+        settings["handlers"][handler] = corgi
 
+    InitializedSignal.send("ready")
     application = tornado.web.Application([
         (r"/event", EventHandler),
-    ], **settings)
+    ], settings)
 
     if config.get('dry-run'):
         log.info('In dry-run mode')

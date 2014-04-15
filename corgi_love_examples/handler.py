@@ -33,10 +33,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
 
+from blinker import signal
+
 from corgi import Corgi as Base
 
 logger = logging.getLogger('corgi.examples')
 
 
 class Corgi(Base):
-    pass
+
+    def __init__(self):
+        super(Corgi, self).__init__()
+
+    def name(self):
+        return "examples"
+
+    def receive(self, sender, **kwargs):
+        pass

@@ -32,11 +32,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
 
-logger = logging.getLogger('corgi')
+from blinker import signal
 
+logger = logging.getLogger('corgi.base')
+ReceivedDataSignal = signal("corgi.base.receive-data")
+InitializedSignal = signal("corgi.base.initialized")
 
 class Corgi(object):
     """
     Friend and companion
     """
-    pass
+
+    def __init__(self):
+        logger.info("Registering...")
+        ReceivedDataSignal.connect(self)
+        InitializedSignal.connect(self)
+
+    def name(self):
+        raise Exception("Must be implemented!")
+
+    def __call__(self, sender, **kwargs):
+        logger.info("%s->%s: %s", sender, self.name(), kwargs)
+        self.receive(sender, **kwargs)
+
+    def receive(self, sender, **kwargs):
+        raise Exception("Must be implemeneted!")
