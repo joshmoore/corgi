@@ -31,9 +31,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+from logging import StreamHandler
+from logging.handlers import WatchedFileHandler
+
 import logging
 
 from blinker import signal
+
 
 RECEIVE_DATA = signal("corgi.base.receive-data")
 
@@ -92,6 +96,21 @@ class Corgi(object):
         raise Exception("must be implemented!")
 
 
+def bark_corgi_bark(config):
+    """
+    Set up our log level
+    """
+    try:
+        filename = config['server.logging_filename']
+        handler = WatchedFileHandler(filename)
+    except KeyError:
+        handler = StreamHandler()
+    handler.setFormatter(logging.Formatter(config['server.logging_format']))
+    root_logger = logging.getLogger('')
+    root_logger.setLevel(int(config['server.logging_level']))
+    root_logger.addHandler(handler)
+
+
 def register_corgis(names, debug=False):
     logger = logging.getLogger("corgi.registration")
     instances = []
@@ -114,4 +133,3 @@ def register_corgis(names, debug=False):
             logger.error('No corgi handler found: ' + modname,
                          exc_info=debug)
     return instances
-

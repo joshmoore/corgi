@@ -37,16 +37,12 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
-from corgi_loves import AbstractException
-from corgi_loves import Corgi
 from corgi_loves import INITIALIZED
 from corgi_loves import RECEIVE_DATA
+from corgi_loves import bark_corgi_bark
 from corgi_loves import register_corgis
 
 from config import config
-
-from logging import StreamHandler
-from logging.handlers import WatchedFileHandler
 
 logger = logging.getLogger('server')
 
@@ -59,17 +55,7 @@ class EventHandler(tornado.web.RequestHandler):
 
 
 def main():
-    # Set up our log level
-    try:
-        filename = config['server.logging_filename']
-        handler = WatchedFileHandler(filename)
-    except KeyError:
-        handler = StreamHandler()
-    handler.setFormatter(logging.Formatter(config['server.logging_format']))
-    root_logger = logging.getLogger('')
-    root_logger.setLevel(int(config['server.logging_level']))
-    root_logger.addHandler(handler)
-
+    bark_corgi_bark(config)
     settings = {
     }
 
@@ -81,7 +67,7 @@ def main():
     port = int(config['server.socket_port'])
 
     handlers = config['server.handlers']
-    instances = register_corgis(handlers, "debug" in config)
+    settings["instances"] = register_corgis(handlers, "debug" in config)
     INITIALIZED.send("server", message="ready")
 
     application = tornado.web.Application([
