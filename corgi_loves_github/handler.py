@@ -40,7 +40,6 @@ logger = logging.getLogger('corgi.github')
 
 RECEIVE_DATA = signal("corgi.data.github")
 PULL_REQUEST = signal("corgi.github.pull_request")
-HEADER = '### Referenced Issues:'
 
 
 class Corgi(Base):
