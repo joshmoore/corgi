@@ -48,9 +48,6 @@ from logging.handlers import WatchedFileHandler
 log = logging.getLogger('server')
 
 
-HEADER = '### Referenced Issues:'
-
-
 def create_tree_url(data, head_or_base='head'):
     ref = data['pull_request'][head_or_base]['ref']
     url = '%s/tree/%s' % (
@@ -151,51 +148,6 @@ def get_issue_titles(issues):
         for issue in issues:
             titles[issue] = corgi.get_issue_title(issue)
     return titles
-
-
-def update_pr_description(pullrequest):
-    log.info(
-        'Updating PR description for %s PR %s' %
-            (pullrequest.base.repo.full_name, pullrequest.number)
-    )
-    body = pullrequest.body
-    issues = get_issues_from_pr(pullrequest)
-    titles = get_issue_titles(issues)
-    links = list()
-    for issue in issues:
-        link = '* [Issue %s: %s](%sissues/%s)' % (
-            issue, titles[issue], config['redmine.url'], issue
-        )
-        links.append(link)
-    links = '\n'.join(links)
-
-    lines = [line.strip() for line in body.split('\n')]
-    if HEADER in lines:
-        log.info('Found existing list of issues, updating')
-        # update existing list
-        pos = lines.index(HEADER) + 1
-        while pos < len(lines) and lines[pos].startswith('* '):
-            del lines[pos]
-        if links:
-            lines.insert(pos, links)
-        else:
-            log.info('Removing existing list of issues')
-            del lines[pos - 1]
-    elif links:
-        log.info('No existing list of issues found, creating')
-        lines.append(HEADER)
-        lines.append(links)
-
-    updated_body = '\n'.join(lines)
-
-    if updated_body != body:
-        log.info('Committing new body')
-        if not config.get('dry-run'):
-            pullrequest.edit(body=updated_body)
-    else:
-        log.info('Body unchanged, skipping commit')
-
-    return updated_body
 
 
 class EventHandler(tornado.web.RequestHandler):
