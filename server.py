@@ -38,8 +38,6 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
-from jenkinsapi.jenkins import Jenkins
-
 from corgi import Corgi
 from config import config
 from collections import defaultdict
