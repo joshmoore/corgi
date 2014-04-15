@@ -30,8 +30,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+import tornado
 import logging
 import copy
+import os
 
 from corgi_loves import Corgi as Base
 from redmine import Redmine

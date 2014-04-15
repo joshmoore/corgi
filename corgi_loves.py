@@ -90,3 +90,28 @@ class Corgi(object):
 
     def receive(self, sender, **kwargs):
         raise Exception("must be implemented!")
+
+
+def register_corgis(names, debug=False):
+    logger = logging.getLogger("corgi.registration")
+    instances = []
+    for name in names:
+        try:
+            modname = "corgi_loves_%s.handler" % name
+            mod = __import__(modname, "handler")
+            for objname in dir(mod.handler):
+                try:
+                    obj = getattr(mod.handler, objname)
+                    if issubclass(obj, Corgi) and obj != Corgi:
+                        instances.append(obj())
+                except AbstractException:
+                    continue
+                except AttributeError:
+                    continue
+                except TypeError:
+                    continue
+        except:
+            logger.error('No corgi handler found: ' + modname,
+                         exc_info=debug)
+    return instances
+

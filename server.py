@@ -41,6 +41,7 @@ from corgi_loves import AbstractException
 from corgi_loves import Corgi
 from corgi_loves import INITIALIZED
 from corgi_loves import RECEIVE_DATA
+from corgi_loves import register_corgis
 
 from config import config
 
@@ -80,26 +81,7 @@ def main():
     port = int(config['server.socket_port'])
 
     handlers = config['server.handlers']
-    instances = []
-    for handler in handlers:
-        try:
-            modname = "corgi_loves_%s.handler" % handler
-            mod = __import__(modname, "handler")
-            for objname in dir(mod.handler):
-                try:
-                    obj = getattr(mod.handler, objname)
-                    if issubclass(obj, Corgi) and obj != Corgi:
-                        instances.append(obj())
-                except AbstractException:
-                    continue
-                except AttributeError:
-                    continue
-                except TypeError:
-                    continue
-        except:
-            logger.error('No corgi handler found: ' + modname,
-                         exc_info=('debug' in config))
-
+    instances = register_corgis(handlers, "debug" in config)
     INITIALIZED.send("server", message="ready")
 
     application = tornado.web.Application([
