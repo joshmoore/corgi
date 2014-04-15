@@ -28,7 +28,7 @@ class Pull(Dummy):
         self.body = "body"
 
     def get_commits(self, *args, **kwargs):
-        return []
+        return [Commit(*args, **kwargs)]
 
 class Base(Dummy):
 
@@ -36,3 +36,11 @@ class Base(Dummy):
         super(Base, self).__init__(*args, **kwargs)
         self.repo = Repo(*args, **kwargs)
 
+
+class Commit(Dummy):
+
+    def __init__(self, *args, **kwargs):
+        super(Commit, self).__init__(*args, **kwargs)
+        self.commit = self
+        self.message = "mocked-commit-msg"
+        self._rawData = {"html_url": "fake-url"}
