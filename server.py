@@ -52,36 +52,6 @@ from logging.handlers import WatchedFileHandler
 log = logging.getLogger('server')
 
 
-def get_pullrequest(repo_name, pr_number):
-    gh = github.Github(config['git.token'])
-    repo = gh.get_repo(repo_name)
-    return repo.get_pull(pr_number)
-
-
-def get_commits_from_pr(pullrequest):
-    cached = getattr(pullrequest, '_cached_commits', None)
-    if not cached:
-        cached = pullrequest.get_commits()
-        setattr(pullrequest, '_cached_commits', cached)
-    return cached
-
-
-def get_issues_from_pr(pullrequest):
-    text = [pullrequest.title, pullrequest.body]
-    for commit in get_commits_from_pr(pullrequest):
-        text.append(commit.commit.message)
-    return sorted(set(map(int, re.findall(r'\bgs-(\d+)', ' '.join(text)))))
-
-
-def get_issue_titles(issues):
-    corgi = Corgi(config['redmine.url'], config['redmine.auth_key'])
-    titles = dict()
-    if corgi.connected:
-        for issue in issues:
-            titles[issue] = corgi.get_issue_title(issue)
-    return titles
-
-
 class EventHandler(tornado.web.RequestHandler):
 
     receive_data = signal('receive_data')
