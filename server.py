@@ -28,10 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+import sys
 import simplejson
 import logging
-import re
-import os
 
 import tornado.httpserver
 import tornado.ioloop
@@ -40,34 +39,24 @@ import tornado.template
 
 from blinker import signal
 
-from corgi import Corgi
-from corgi import InitializedSignal
+from corgi_loves import Corgi
+from corgi_loves import InitializedSignal
+from corgi_loves import ReceivedDataSignal
 
 from config import config
-from collections import defaultdict
 
 from logging import StreamHandler
 from logging.handlers import WatchedFileHandler
 
-log = logging.getLogger('server')
+logger = logging.getLogger('server')
 
 
 class EventHandler(tornado.web.RequestHandler):
 
-    receive_data = signal('receive_data')
-
-    def initialize(self, **kwargs):
-        print kwargs
-        self.settings = settings
-        self.handlers = dict()
-        for k, v in self.settings.items():
-            if isinstanceof(v, Corgi):
-                self.handlers[k] = v
-        logging.info("Running with handlers %s" % ",".join(self.handlers.keys()))
-
     def post(self):
         data = simplejson.loads(self.request.body)
-        receive_data.send(data)
+        data["_sender"] = "server"
+        ReceivedDataSignal.send(data)
 
 
 def main():
@@ -83,11 +72,10 @@ def main():
     root_logger.addHandler(handler)
 
     settings = {
-        "handlers": {},
     }
 
     if 'debug' in config:
-        log.info('Enabling Tornado Web debug mode')
+        logger.info('Enabling Tornado Web debug mode')
         settings['debug'] = config['debug']
 
     host = config['server.socket_host']
@@ -100,23 +88,26 @@ def main():
             mod = __import__(modname, "handler")
             corgi = getattr(mod.handler, "Corgi")()
         except:
-            log.error('No corgi handler found: ' + modname,
+            logger.error('No corgi handler found: ' + modname,
                       exc_info=('debug' in config))
             continue
-        settings["handlers"][handler] = corgi
+        settings[handler] = corgi
 
     InitializedSignal.send("ready")
     application = tornado.web.Application([
         (r"/event", EventHandler),
-    ], settings)
+    ], **settings)
 
     if config.get('dry-run'):
-        log.info('In dry-run mode')
+        logger.info('In dry-run mode')
 
-    log.info('Starting corgi server http://%s:%d/' % (host, port))
+    logger.info('Starting corgi server http://%s:%d/' % (host, port))
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(port, host)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)

@@ -31,14 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-import logging
-
 from blinker import signal
-
-from corgi import Corgi as Base
-
-logger = logging.getLogger('corgi.examples')
-
+from corgi_loves import Corgi as Base
 
 class Corgi(Base):
 
@@ -48,5 +42,5 @@ class Corgi(Base):
     def name(self):
         return "examples"
 
-    def receive(self, sender, **kwargs):
+    def receive(self, kwargs):
         pass

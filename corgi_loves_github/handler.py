@@ -31,9 +31,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+import re
+import config
 import logging
+import github
 
-from corgi import Corgi as Base
+from corgi_loves import Corgi as Base
 
 logger = logging.getLogger('corgi.github')
 
@@ -71,9 +74,8 @@ def get_issue_titles(issues):
     return titles
 
 
-
 def update_pr_description(pullrequest):
-    log.info(
+    logger.info(
         'Updating PR description for %s PR %s' %
             (pullrequest.base.repo.full_name, pullrequest.number)
     )
@@ -90,7 +92,7 @@ def update_pr_description(pullrequest):
 
     lines = [line.strip() for line in body.split('\n')]
     if HEADER in lines:
-        log.info('Found existing list of issues, updating')
+        logger.info('Found existing list of issues, updating')
         # update existing list
         pos = lines.index(HEADER) + 1
         while pos < len(lines) and lines[pos].startswith('* '):
@@ -98,21 +100,21 @@ def update_pr_description(pullrequest):
         if links:
             lines.insert(pos, links)
         else:
-            log.info('Removing existing list of issues')
+            logger.info('Removing existing list of issues')
             del lines[pos - 1]
     elif links:
-        log.info('No existing list of issues found, creating')
+        logger.info('No existing list of issues found, creating')
         lines.append(HEADER)
         lines.append(links)
 
     updated_body = '\n'.join(lines)
 
     if updated_body != body:
-        log.info('Committing new body')
+        logger.info('Committing new body')
         if not config.get('dry-run'):
             pullrequest.edit(body=updated_body)
     else:
-        log.info('Body unchanged, skipping commit')
+        logger.info('Body unchanged, skipping commit')
 
     return updated_body
 

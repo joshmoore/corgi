@@ -31,9 +31,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+
+import config
 import logging
 
-from corgi import Corgi as Base
+from corgi_loves import Corgi as Base
+from jenkinsapi import Jenkins
+
 
 logger = logging.getLogger('corgi.jenkins')
 
