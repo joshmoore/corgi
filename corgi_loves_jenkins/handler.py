@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import config
 
-from corgi_loves import Corgi as Base
+from corgi_loves import Corgi
 from jenkinsapi import Jenkins
 
 
@@ -51,7 +51,7 @@ def run_jenkins_job(job):
         logging.debug('Available Jenkins jobs: %s' % ', ' % jenkins.keys())
 
 
-class Corgi(Base):
+class jenkins(Corgi):
 
     def handle(self, data):
 

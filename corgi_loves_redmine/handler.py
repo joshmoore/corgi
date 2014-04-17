@@ -31,22 +31,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from blinker import signal
-from corgi_loves import Corgi as Base
+from corgi_loves import Corgi
 
 
 GET_ISSUE_TITLES = signal("corgi:rm:issue_titles")
 
 
-class Corgi(Base):
+class redmine(Corgi):
 
     def __init__(self):
         PULL_REQUEST = signal("corgi:gh:pr")
-        super(Corgi, self).__init__()
+        super(redmine, self).__init__()
         self.register(PULL_REQUEST)
         self.register(GET_ISSUE_TITLES)
-
-    def name(self):
-        return "redmine"
 
     def receive(self, sender, sig=None, **kwargs):
         PULL_REQUEST = signal("corgi:gh:pr")

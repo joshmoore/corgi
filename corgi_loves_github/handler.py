@@ -31,24 +31,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-from corgi_loves import Corgi as Base
+from corgi_loves import Corgi
 from blinker import signal
 
 RECEIVE_DATA = signal("corgi:gh:data")
 PULL_REQUEST = signal("corgi:gh:pr")
 
 
-class Corgi(Base):
+class github(Corgi):
 
     def __init__(self):
-        super(Corgi, self).__init__()
+        super(github, self).__init__()
 
     def initialize(self, sender, paths=None, **kwargs):
-        super(Corgi, self).initialize(sender, paths=paths, **kwargs)
+        super(github, self).initialize(sender, paths=paths, **kwargs)
         self.register(RECEIVE_DATA, paths=paths)
-
-    def name(self):
-        return "github"
 
     def receive(self, sender, **kwargs):
         data = kwargs.get("data", {})

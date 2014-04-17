@@ -32,23 +32,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-from corgi_loves import Corgi as Base
+from corgi_loves import Corgi
 from blinker import signal
 
 PULL_REQUEST = signal("corgi:gh:pr")
 
 
-class Corgi(Base):
+class trello(Corgi):
 
     def __init__(self):
-        super(Corgi, self).__init__()
+        super(trello, self).__init__()
 
     def initialize(self, sender, paths=None, **kwargs):
-        super(Corgi, self).initialize(sender, paths=paths, **kwargs)
+        super(trello, self).initialize(sender, paths=paths, **kwargs)
         self.register(PULL_REQUEST)
-
-    def name(self):
-        return "trello"
 
     def receive(self, sender, sig=None, data=None, **kwargs):
         if sig is PULL_REQUEST:

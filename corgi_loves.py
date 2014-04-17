@@ -73,7 +73,7 @@ class Corgi(object):
         INITIALIZED.connect(self.initialize)
 
     def name(self):
-        raise Exception("Must be implemented!")
+        return self.__class__.__name__
 
     def initialize(self, sender, paths=None, **kwargs):
         if paths is None:
