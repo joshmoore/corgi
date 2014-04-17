@@ -48,8 +48,7 @@ class Common(Corgi):
         super(Common, self).__init__()
         self.register(OTHER_EXAMPLES)
 
-    def initialize(self, sender, paths=None, **kwargs):
-        super(Common, self).initialize(sender, paths=paths, **kwargs)
+    def on_init(self, sender, paths=None, **kwargs):
         self.register(RECEIVE_DATA, paths=paths)
 
     def receive(self, sender, sig=None, **kwargs):

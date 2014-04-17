@@ -43,8 +43,7 @@ class trello(Corgi):
     def __init__(self):
         super(trello, self).__init__()
 
-    def initialize(self, sender, paths=None, **kwargs):
-        super(trello, self).initialize(sender, paths=paths, **kwargs)
+    def on_init(self, sender, paths=None, **kwargs):
         self.register(PULL_REQUEST)
 
     def receive(self, sender, sig=None, data=None, **kwargs):

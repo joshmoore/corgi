@@ -43,8 +43,7 @@ class github(Corgi):
     def __init__(self):
         super(github, self).__init__()
 
-    def initialize(self, sender, paths=None, **kwargs):
-        super(github, self).initialize(sender, paths=paths, **kwargs)
+    def on_init(self, sender, paths=None, **kwargs):
         self.register(RECEIVE_DATA, paths=paths)
 
     def receive(self, sender, **kwargs):

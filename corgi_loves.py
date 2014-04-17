@@ -81,7 +81,16 @@ class Corgi(object):
         self.config = kwargs.get("config", {})
         if not self.config:
             self.logger.warn("No config found")
+        self.on_init(sender, paths=paths, **kwargs)
         self.logger.info("Initialization done")
+
+    def on_init(self, sender, paths=None, **kwargs):
+        """
+        No-op method for overriding by subclasses.
+        There's no need to call super(..., self).on_init()
+        or similar.
+        """
+        pass
 
     def lookup(self, key, prefix=None, safe=True):
 
