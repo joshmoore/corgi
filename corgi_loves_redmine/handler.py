@@ -34,13 +34,13 @@ from blinker import signal
 from corgi_loves import Corgi as Base
 
 
-GET_ISSUE_TITLES = signal("corgi.rm.issue_titles")
+GET_ISSUE_TITLES = signal("corgi:rm:issue_titles")
 
 
 class Corgi(Base):
 
     def __init__(self):
-        PULL_REQUEST = signal("corgi.gh.pr")
+        PULL_REQUEST = signal("corgi:gh:pr")
         super(Corgi, self).__init__()
         self.register(PULL_REQUEST)
         self.register(GET_ISSUE_TITLES)
@@ -49,7 +49,7 @@ class Corgi(Base):
         return "redmine"
 
     def receive(self, sender, sig=None, **kwargs):
-        PULL_REQUEST = signal("corgi.gh.pr")
+        PULL_REQUEST = signal("corgi:gh:pr")
         issues = kwargs.get("issues", [])
         if sig == GET_ISSUE_TITLES:
             from corgi_loves_redmine.impl import get_issue_titles

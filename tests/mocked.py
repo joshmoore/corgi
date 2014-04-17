@@ -48,9 +48,9 @@ config = ConfigObj(configfile, interpolation=False, file_error=True)
 bark_corgi_bark(config)
 instances = register_corgis(["github", "redmine"], debug=True)
 
-signal("corgi.init").send("mocked", paths={})
+signal("corgi:init").send("mocked", paths={})
 
 with open(os.path.join(datadir, "step1-open.json"), "r") as f:
     step1_open = json.load(f)
 
-signal("corgi.gh.data").send("mocked", data=step1_open)
+signal("corgi:gh:data").send("mocked", data=step1_open)

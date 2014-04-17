@@ -53,7 +53,7 @@ class Base(object):
         bark_corgi_bark(self.config)
         self.instances = register_corgis(self.HANDLERS, debug=True)
 
-        signal("corgi.init").send(self.__class__.__name__, paths={})
+        signal("corgi:init").send(self.__class__.__name__, paths={})
 
     def main(self):
         raise Exception("must be implemented")

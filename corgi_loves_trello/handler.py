@@ -39,7 +39,7 @@ from blinker import signal
 
 logger = logging.getLogger('corgi.trello')
 
-PULL_REQUEST = signal("corgi.gh.pr")
+PULL_REQUEST = signal("corgi:gh:pr")
 
 
 class Corgi(Base):

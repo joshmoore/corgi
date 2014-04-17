@@ -45,7 +45,7 @@ class Scenario001(Base):
     HANDLERS = ["github", "trello"]
 
     def main(self):
-        self.send("corgi.gh.pr",
+        self.send("corgi:gh:pr",
                   data={})
 
 if __name__ == "__main__":

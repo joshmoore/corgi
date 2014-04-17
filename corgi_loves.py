@@ -43,7 +43,7 @@ import logging
 from blinker import signal
 
 
-INITIALIZED = signal("corgi.init")
+INITIALIZED = signal("corgi:init")
 
 
 class AbstractException(Exception):
