@@ -32,12 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-import logging
-
 from corgi_loves import Corgi as Base
 from blinker import signal
-
-logger = logging.getLogger('corgi.trello')
 
 PULL_REQUEST = signal("corgi:gh:pr")
 
