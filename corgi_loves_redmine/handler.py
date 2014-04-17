@@ -34,7 +34,7 @@ from blinker import signal
 from corgi_loves import Corgi as Base
 
 
-GET_ISSUE_TITLES = signal("corgi.redmine.get_issue_titles")
+GET_ISSUE_TITLES = signal("corgi.rm.issue_titles")
 
 
 class Corgi(Base):

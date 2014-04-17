@@ -38,8 +38,8 @@ from blinker import signal
 
 logger = logging.getLogger('corgi.github')
 
-RECEIVE_DATA = signal("corgi.data.github")
-PULL_REQUEST = signal("corgi.github.pull_request")
+RECEIVE_DATA = signal("corgi.gh.data")
+PULL_REQUEST = signal("corgi.gh.pr")
 
 
 class Corgi(Base):
