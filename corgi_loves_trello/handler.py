@@ -56,4 +56,16 @@ class Corgi(Base):
 
     def receive(self, sender, sig=None, data=None, **kwargs):
         if sig is PULL_REQUEST:
-            self.logger.info("Received PR")
+            pr_id = kwargs.get("pr_id", "unknown")
+            self.logger.info("Received PR %s", pr_id)
+            self.handle_pr(pr_id)
+
+    def handle_pr(self, pr_id):
+        board = self.get_pr_board()
+        card = self.find_pr_card(board)
+
+    def get_pr_board(self):
+        pass
+
+    def find_pr_card(self, board):
+        pass

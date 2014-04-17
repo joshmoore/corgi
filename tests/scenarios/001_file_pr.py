@@ -35,8 +35,10 @@ from common import Base
 
 class Scenario001(Base):
     """
-    A PR is filed on GitHub. The following items should be synchronized:
-        * trello
+    A PR is filed on GitHub. The following items
+    should be synchronized:
+
+        * trello card should be created.
 
     """
 
