@@ -47,26 +47,26 @@ logger = logging.getLogger('server')
 
 
 def main():
-    bark_corgi_bark(config)
-    settings = {
-    }
+
+    settings = dict()
 
     if 'debug' in config:
         logger.info('Enabling Tornado Web debug mode')
         settings['debug'] = config['debug']
 
-    host = config['server.socket_host']
-    port = int(config['server.socket_port'])
-
-    names = config['server.handlers']
-    pups = find_the_corgis(names, "debug" in config)
-    info = get_em_ready(pups)
-    application = tornado.web.Application(info, **settings)
-
     if config.get('dry-run'):
         logger.info('In dry-run mode')
 
+    bark_corgi_bark(config)
+    names = config['server.handlers']
+    pups = find_the_corgis(names, "debug" in config)
+    leashes = get_em_ready(pups)
+    application = tornado.web.Application(leashes, **settings)
+
+    host = config['server.socket_host']
+    port = int(config['server.socket_port'])
     logger.info('Starting corgi server http://%s:%d/' % (host, port))
+
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(port, host)
     tornado.ioloop.IOLoop.instance().start()
