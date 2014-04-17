@@ -65,7 +65,8 @@ class Corgi(Base):
         card = self.find_pr_card(board)
 
     def get_pr_board(self):
-        pass
+        board_url = self.lookup("pr_board_url")
+        return board_url
 
     def find_pr_card(self, board):
         pass

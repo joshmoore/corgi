@@ -61,7 +61,7 @@ def main():
 
     # Allows each app to register itself
     paths = dict()
-    signal("corgi:init").send("server", paths=paths)
+    signal("corgi:init").send("server", paths=paths, config=config)
     paths = paths.items()
     for k, v in paths:
         logger.info("Registered %s", k)

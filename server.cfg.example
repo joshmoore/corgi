@@ -21,6 +21,9 @@ debug = "yes"
 # Don't actually do anything
 # dry-run = "yes"
 
+# Trello API Settings
+trello.pr_board_url = "example.com"
+
 # Redmine API settings
 redmine.url = ""
 redmine.auth_key = ""

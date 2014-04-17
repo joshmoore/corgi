@@ -78,7 +78,25 @@ class Corgi(object):
     def initialize(self, sender, paths=None, **kwargs):
         if paths is None:
             self.logger.warn("Paths None")
+        self.config = kwargs.get("config", {})
+        if not self.config:
+            self.logger.warn("No config found")
         self.logger.info("Initialization done")
+
+    def lookup(self, key, prefix=None, safe=True):
+
+        if prefix is None:
+            prefix = self.name()
+        key = "%s.%s" % (prefix, key)
+
+        value = None
+        if safe:
+            if self.config:
+                value = self.config.get(key, None)
+        else:
+            value = self.config[key]
+        self.logger.debug("config[%s]=%s", key, value)
+        return value
 
     def new_handler(self, signal):
 
