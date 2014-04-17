@@ -36,8 +36,6 @@ import json
 
 from corgi_loves import bark_corgi_bark
 from corgi_loves import register_corgis
-from corgi_loves import INITIALIZED
-from corgi_loves_github.handler import RECEIVE_DATA as GH_DATA
 
 from blinker import signal
 from configobj import ConfigObj
@@ -50,9 +48,9 @@ config = ConfigObj(configfile, interpolation=False, file_error=True)
 bark_corgi_bark(config)
 instances = register_corgis(["github", "redmine"], debug=True)
 
-INITIALIZED.send("mocked", paths={})
+signal("corgi.init").send("mocked", paths={})
 
 with open(os.path.join(datadir, "step1-open.json"), "r") as f:
     step1_open = json.load(f)
 
-GH_DATA.send("mocked", data=step1_open)
+signal("corgi.gh.data").send("mocked", data=step1_open)

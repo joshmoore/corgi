@@ -36,7 +36,6 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
-from corgi_loves import INITIALIZED
 from corgi_loves import bark_corgi_bark
 from corgi_loves import register_corgis
 
@@ -62,7 +61,7 @@ def main():
 
     # Allows each app to register itself
     paths = dict()
-    INITIALIZED.send("server", paths=paths)
+    signal("corgi.init").send("server", paths=paths)
     paths = paths.items()
     for k, v in paths:
         logger.info("Registered %s", k)
