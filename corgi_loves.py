@@ -137,7 +137,8 @@ class Corgi(object):
 
 def bark_corgi_bark(config):
     """
-    Set up our log level
+    Set up our log level based on the configuration
+    availalbe in the cfg file.
     """
     try:
         filename = config['server.logging_filename']
@@ -150,8 +151,18 @@ def bark_corgi_bark(config):
     root_logger.addHandler(handler)
 
 
-def register_corgis(names, debug=False):
-    logger = logging.getLogger("corgi.registration")
+def find_the_corgis(names, debug=False):
+    """
+    Use the names provided in the config to
+    search for modules which match the corgi_loves
+    requirements:
+
+      * package = 'corgi_loves_$NAME'
+      * module = 'handler'
+      * classes of type 'corgi_loves.Corgi'
+
+    """
+    logger = logging.getLogger("corgi.find")
     instances = []
     for name in names:
         try:
@@ -172,3 +183,19 @@ def register_corgis(names, debug=False):
             logger.error('No corgi handler found: ' + modname,
                          exc_info=debug)
     return instances
+
+
+def get_em_ready(config):
+    """
+    Allows each app to register itself at a
+    particular sub-url with a single signal
+    handler. See the on_init methods for more
+    information.
+    """
+    logger = logging.getLogger("corgi.register")
+    paths = dict()
+    signal("corgi:init").send("server", paths=paths, config=config)
+    paths = paths.items()
+    for k, v in paths:
+        logger.info("Registered %s", k)
+    return paths

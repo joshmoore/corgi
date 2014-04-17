@@ -35,7 +35,8 @@ import os
 import json
 
 from corgi_loves import bark_corgi_bark
-from corgi_loves import register_corgis
+from corgi_loves import find_the_corgis
+from corgi_loves import get_em_ready
 
 from blinker import signal
 from configobj import ConfigObj
@@ -51,11 +52,8 @@ class Base(object):
         self.config = ConfigObj(self.configfile, interpolation=False, file_error=True)
 
         bark_corgi_bark(self.config)
-        self.instances = register_corgis(self.HANDLERS, debug=True)
-
-        signal("corgi:init").send(
-                self.__class__.__name__, paths={},
-                config=self.config)
+        self.instances = find_the_corgis(self.HANDLERS, debug=True)
+        self.leashes = get_em_ready(self.config)
 
     def main(self):
         raise Exception("must be implemented")

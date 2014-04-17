@@ -37,7 +37,8 @@ import tornado.web
 import tornado.template
 
 from corgi_loves import bark_corgi_bark
-from corgi_loves import register_corgis
+from corgi_loves import find_the_corgis
+from corgi_loves import get_em_ready
 
 from blinker import signal
 from config import config
@@ -57,17 +58,10 @@ def main():
     host = config['server.socket_host']
     port = int(config['server.socket_port'])
 
-    handlers = config['server.handlers']
-    settings["instances"] = register_corgis(handlers, "debug" in config)
-
-    # Allows each app to register itself
-    paths = dict()
-    signal("corgi:init").send("server", paths=paths, config=config)
-    paths = paths.items()
-    for k, v in paths:
-        logger.info("Registered %s", k)
-
-    application = tornado.web.Application(paths, **settings)
+    names = config['server.handlers']
+    pups = find_the_corgis(names, "debug" in config)
+    info = get_em_ready(pups)
+    application = tornado.web.Application(info, **settings)
 
     if config.get('dry-run'):
         logger.info('In dry-run mode')
