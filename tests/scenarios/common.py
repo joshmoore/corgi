@@ -58,3 +58,6 @@ class Base(object):
 
     def main(self):
         raise Exception("must be implemented")
+
+    def send(self, name, *args, **kwargs):
+        signal(name).send(self, *args, **kwargs)

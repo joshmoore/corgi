@@ -54,6 +54,6 @@ class Corgi(Base):
     def name(self):
         return "trello"
 
-    def receive(self, sender, sig=sig, data=data, **kwargs):
+    def receive(self, sender, sig=None, data=None, **kwargs):
         if sig is PULL_REQUEST:
             self.logger.info("Received PR")

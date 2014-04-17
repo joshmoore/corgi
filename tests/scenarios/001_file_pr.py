@@ -43,7 +43,8 @@ class Scenario001(Base):
     HANDLERS = ["github", "trello"]
 
     def main(self):
-        pass
+        self.send("corgi.github.pull_request",
+                  data={})
 
 if __name__ == "__main__":
     Scenario001().main()
