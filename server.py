@@ -39,6 +39,7 @@ import tornado.template
 from corgi_loves import bark_corgi_bark
 from corgi_loves import register_corgis
 
+from blinker import signal
 from config import config
 
 logger = logging.getLogger('server')
