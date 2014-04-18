@@ -50,7 +50,6 @@ CLASSIFIERS = ["Development Status :: 4 - Beta",
 REQUIREMENTS = open("requirements.txt", "r").read()
 REQUIREMENTS = [line.strip() for line in REQUIREMENTS.split("\n")
                 if line.strip() and not line.strip().startswith("#")]
-print REQUIREMENTS
 
 setup(name='corgi',
 
