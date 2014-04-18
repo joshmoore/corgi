@@ -74,7 +74,7 @@ def entry_point(args=None):
         main()
     elif args[1] == "available":
         for path_segment in sys.path:
-            glob_path = os.path.join(path_segment, "corgi_loves_*")
+            glob_path = os.path.join(path_segment, "corgi_*_*")
             glob_files = glob.glob(glob_path)
             for glob_file in glob_files:
                 print glob_file.split("_")[-1]
@@ -195,31 +195,43 @@ def find_the_corgis(names, debug=False):
     search for modules which match the corgi_loves
     requirements:
 
-      * For packages matching 'corgi_loves_$NAME',
+      * For packages matching 'corgi_$VERB_$NAME',
       * all subclasses of 'corgi_loves.Corgi' that
       * are in the default namespace (i.e. __init__.py)
 
     """
     logger = logging.getLogger("corgi.find")
     instances = []
+
     for name in names:
+        # Try verbs
+        mod = None
+        modname = "corgi_%s_%s" % ("loves", name)
         try:
-            modname = "corgi_loves_%s" % name
             mod = __import__(modname)
-            for objname in dir(mod):
-                try:
-                    obj = getattr(mod, objname)
-                    if issubclass(obj, Corgi) and obj != Corgi:
-                        instances.append(obj())
-                except AbstractException:
-                    continue
-                except AttributeError:
-                    continue
-                except TypeError:
-                    continue
-        except:
-            logger.error('No corgi handler found: ' + modname,
-                         exc_info=debug)
+        except ImportError:
+            modname = "corgi_%s_%s" % ("hates", name)
+            try:
+                mod = __import__(modname)
+            except ImportError:
+                pass
+
+        # If there's no mode, then we can go to the next name.
+        if mod is None:
+            logger.error('No corgi handler found: ' + name)
+            continue
+
+        # If module is found, look for Corgi classes
+        for objname in dir(mod):
+            try:
+                obj = getattr(mod, objname)
+                if issubclass(obj, Corgi) and obj != Corgi:
+                    instances.append(obj())
+            except (AbstractException, AttributeError, TypeError):
+                continue
+            except:
+                logger.debug('Unexpected error for %s',
+                             name, exc_info=debug)
     return instances
 
 
