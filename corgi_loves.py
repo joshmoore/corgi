@@ -169,20 +169,20 @@ def find_the_corgis(names, debug=False):
     search for modules which match the corgi_loves
     requirements:
 
-      * package = 'corgi_loves_$NAME'
-      * module = 'handler'
-      * classes of type 'corgi_loves.Corgi'
+      * For packages matching 'corgi_loves_$NAME',
+      * all subclasses of 'corgi_loves.Corgi' that
+      * are in the default namespace (i.e. __init__.py)
 
     """
     logger = logging.getLogger("corgi.find")
     instances = []
     for name in names:
         try:
-            modname = "corgi_loves_%s.handler" % name
-            mod = __import__(modname, "handler")
-            for objname in dir(mod.handler):
+            modname = "corgi_loves_%s" % name
+            mod = __import__(modname)
+            for objname in dir(mod):
                 try:
-                    obj = getattr(mod.handler, objname)
+                    obj = getattr(mod, objname)
                     if issubclass(obj, Corgi) and obj != Corgi:
                         instances.append(obj())
                 except AbstractException:
