@@ -42,7 +42,7 @@ PR = signal("corgi:gh:pr")
 class mailman(Corgi):
 
     def on_init(self, sender, paths=None, **kwargs):
-        self.register(DATA, paths=paths)
+        self.mount_at_path(DATA, paths)
         self.register(PR)
 
     def receive(self, sender, sig=None, data=None, **kwargs):

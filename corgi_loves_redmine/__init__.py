@@ -42,6 +42,8 @@ class redmine(Corgi):
     def __init__(self):
         PULL_REQUEST = signal("corgi:gh:pr")
         super(redmine, self).__init__()
+
+    def on_init()
         self.register(PULL_REQUEST)
         self.register(GET_ISSUE_TITLES)
 

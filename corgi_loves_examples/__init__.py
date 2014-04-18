@@ -46,10 +46,10 @@ class Common(Corgi):
         if self.__class__ == Common:
             raise AbstractException("abstract")
         super(Common, self).__init__()
-        self.register(OTHER_EXAMPLES)
 
     def on_init(self, sender, paths=None, **kwargs):
-        self.register(RECEIVE_DATA, paths=paths)
+        self.mount_at_path(RECEIVE_DATA, paths)
+        self.register(OTHER_EXAMPLES)
 
     def receive(self, sender, sig=None, **kwargs):
         if sig is RECEIVE_DATA:
@@ -57,7 +57,9 @@ class Common(Corgi):
             OTHER_EXAMPLES.send(self.name(), **kwargs)
 
 
-class example1(Common): pass
+class example1(Common):
+    pass
 
 
-class example2(Common): pass
+class example2(Common):
+    pass

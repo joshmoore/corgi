@@ -40,11 +40,8 @@ PULL_REQUEST = signal("corgi:gh:pr")
 
 class github(Corgi):
 
-    def __init__(self):
-        super(github, self).__init__()
-
     def on_init(self, sender, paths=None, **kwargs):
-        self.register(RECEIVE_DATA, paths=paths)
+        self.mount_at_path(RECEIVE_DATA, paths)
 
     def receive(self, sender, **kwargs):
         data = kwargs.get("data", {})

@@ -44,6 +44,7 @@ class trello(Corgi):
         super(trello, self).__init__()
 
     def on_init(self, sender, paths=None, **kwargs):
+        self.mount_at_path(DATA, paths)
         self.register(PULL_REQUEST)
 
     def receive(self, sender, sig=None, data=None, **kwargs):

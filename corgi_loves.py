@@ -153,7 +153,7 @@ class Corgi(object):
         template = loader.load(template)
         return template.generate(**kwargs)
 
-    def register(self, sig, paths=None):
+    def register(self, sig):
         name = sig.name
         if name in self.methods:
             raise Exception("Already registered")
@@ -171,8 +171,12 @@ class Corgi(object):
         self.methods[name] = method
         sig.connect(method)
 
-        # If we've been provided paths for mounting
-        # then add a handler.
+    def mount_at_path(self, sig, paths):
+        """
+        If called during on_init, then when the path
+        for this instance receives a POST, that will be
+        sent via the given signal (sig)
+        """
         if paths is not None:
             paths[r"/event/%s" % self.name()] = self.new_handler(sig)
 
