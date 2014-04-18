@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 
 :author: Josh Moore <josh@glencoesoftware.com>
 
-Test for Corgi
+Mailman (mm) utilities
+
 Copyright (C) 2014 Glencoe Software, Inc.
 All rights reserved.
 
@@ -31,24 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-from common import Base
+from mailbox import mbox
 
-class Scenario001(Base):
-    """
-    A PR is filed on GitHub. The following items
-    should be synchronized:
+def parse_file(path):
+    mailbox = mbox(path)
+    data = dict(path=path, mbox=mailbox)
+    messages = []
+    data["messages"] = messages
+    for message in mailbox:
+        mh_data = dict()
+        messages.append(mh_data)
+        mh_data["from"] = message._from
 
-        * trello card should be created.
 
-        * mailing list should be contacted
-
-    """
-
-    HANDLERS = ["github", "mailman", "trello"]
-
-    def main(self):
-        self.send("corgi:gh:pr",
-                  data={})
-
-if __name__ == "__main__":
-    Scenario001().main()

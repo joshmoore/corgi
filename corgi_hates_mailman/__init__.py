@@ -5,7 +5,8 @@
 
 :author: Josh Moore <josh@glencoesoftware.com>
 
-Test for Corgi
+Mailman Handler API
+
 Copyright (C) 2014 Glencoe Software, Inc.
 All rights reserved.
 
@@ -31,24 +32,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-from common import Base
+from corgi_loves import Corgi
+from blinker import signal
 
-class Scenario001(Base):
-    """
-    A PR is filed on GitHub. The following items
-    should be synchronized:
+DATA = signal("corgi:mm:data")
+PR = signal("corgi:gh:pr")
 
-        * trello card should be created.
 
-        * mailing list should be contacted
+class mailman(Corgi):
 
-    """
+    def on_init(self, sender, paths=None, **kwargs):
+        self.register(DATA, paths=paths)
+        self.register(PR)
 
-    HANDLERS = ["github", "mailman", "trello"]
-
-    def main(self):
-        self.send("corgi:gh:pr",
-                  data={})
-
-if __name__ == "__main__":
-    Scenario001().main()
+    def receive(self, sender, sig=None, data=None, **kwargs):
+        if sig is DATA:
+            self.logger.info("data: %s/%s", data, kwargs)
+        elif sig is PR:
+            self.logger.info("pr: %s/%s", data, kwargs)
