@@ -111,8 +111,11 @@ class Corgi(object):
 
         class EventHandler(tornado.web.RequestHandler):
 
-            def post(self):
-                data = simplejson.loads(self.request.body)
+            def get(this):
+                this.write(self.name())
+
+            def post(this):
+                data = simplejson.loads(this.request.body)
                 signal.send("server", data=data)
 
         return EventHandler
