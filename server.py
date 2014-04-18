@@ -79,10 +79,10 @@ def main():
 
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(port, host)
-    tornado.ioloop.IOLoop.instance().start()
-
-if __name__ == "__main__":
     try:
-        main()
+        tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
         sys.exit(0)
+
+if __name__ == "__main__":
+    main()

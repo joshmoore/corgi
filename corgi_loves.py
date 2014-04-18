@@ -39,7 +39,11 @@ import tornado.web
 
 import simplejson
 import logging
+import glob
+import sys
+import os
 
+#from argpare import Parser
 from blinker import signal
 
 
@@ -52,6 +56,28 @@ class AbstractException(Exception):
     solely useful in the class hierarchy.
     """
     pass
+
+
+def entry_point(args=None):
+    """
+    Method used by the generated `corgi` CLI script
+    Arguments are handled (eventually) via argparse
+    """
+
+    if args == None:
+        args = sys.argv
+
+    if len(args) == 1:
+        print "corgi [available]"
+    elif args[1] == "start":
+        from server import main
+        main()
+    elif args[1] == "available":
+        for path_segment in sys.path:
+            glob_path = os.path.join(path_segment, "corgi_loves_*")
+            glob_files = glob.glob(glob_path)
+            for glob_file in glob_files:
+                print glob_file.split("_")[-1]
 
 
 class Corgi(object):
