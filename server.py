@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+import os
 import sys
 import logging
 
@@ -59,8 +60,17 @@ def main():
 
     bark_corgi_bark(config)
     names = config['server.handlers']
+
+    class EventHandler(tornado.web.RequestHandler):
+
+        def get(self):
+            t = os.path.join(os.path.dirname(__file__), 'templates')  # TODO
+            t = os.path.join(t, "index_info.textile")
+            self.render(t, data=list(names))
+
     pups = find_the_corgis(names, "debug" in config)
     leashes = get_em_ready(pups)
+    leashes.append(("/*", EventHandler))
     application = tornado.web.Application(leashes, **settings)
 
     host = config['server.socket_host']
