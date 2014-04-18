@@ -30,85 +30,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-import tornado
 import logging
 import copy
-import os
 
-from config import config
 from redmine import Redmine
 
 
 logger = logging.getLogger("corgi.redmine.impl")
-
-
-def create_tree_url(data, head_or_base='head'):
-    ref = data['pull_request'][head_or_base]['ref']
-    url = '%s/tree/%s' % (
-        data['pull_request'][head_or_base]['repo']['html_url'],
-        ref
-    )
-    return url
-
-
-def create_issue_update(pullrequest, commits, data):
-
-    def make_past_tense(verb):
-        if not verb.endswith('d'):
-            return verb + 'd'
-        return verb
-
-    loader = tornado.template.Loader(
-        os.path.join(os.path.dirname(__file__), '..', 'templates')  # TODO
-    )
-    template = loader.load('updated_pull_request.textile')
-    return template.generate(
-        data=data,
-        head_url=create_tree_url(data, 'head'),
-        base_url=create_tree_url(data, 'base'),
-        make_past_tense=make_past_tense,
-        commits=commits,
-    )
-
-
-def get_issue_titles(issues):
-    corgi = RedmineConnection(config['redmine.url'], config['redmine.auth_key'])
-    titles = dict()
-    if corgi.connected:
-        for issue in issues:
-            titles[issue] = corgi.get_issue_title(issue)
-    return titles
-
-
-def update_redmine_issues(pullrequest, commits, issues, data):
-    if not issues:
-        logging.info("No issues found")
-    else:
-        logging.info(
-            "Updating Redmine issues %s" % ", ".join(map(str, issues))
-        )
-
-    if issues and not config.get('dry-run'):
-        c = RedmineConnection(
-            config['redmine.url'], config['redmine.auth_key'],
-            config.get('user.mapping.%s' % data['sender']['login'])
-        )
-        if not c.connected:
-            logging.error("Connection to Redmine failed")
-            return
-
-    if data['action'] == 'closed' and data['pull_request']['merged']:
-        data['action'] = 'merged'
-    status = config.get('redmine.status.on-pr-%s' % data['action'])
-    update_message = create_issue_update(pullrequest, commits, data)
-    logging.debug(update_message)
-
-    if not config.get('dry-run'):
-        for issue in issues:
-            c.update_issue(issue, update_message, status)
-            logging.info("Added comment to issue %s" % issue)
-
-
 
 
 class RedmineServerUnset(Exception):

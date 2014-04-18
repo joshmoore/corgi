@@ -92,6 +92,9 @@ class Corgi(object):
         except:
             name = "base"
 
+        self.loader = tornado.template.Loader(
+            os.path.join(os.path.dirname(__file__), '..', 'templates')  # TODO
+        )
         self.methods = dict()
         self.stack = []
         self.logger = logging.getLogger("corgi.%s" % name)
@@ -145,6 +148,10 @@ class Corgi(object):
                 signal.send("server", data=data)
 
         return EventHandler
+
+    def render(self, template, **kwargs):
+        template = loader.load(template)
+        return template.generate(**kwargs)
 
     def register(self, sig, paths=None):
         name = sig.name
