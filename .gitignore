@@ -6,3 +6,5 @@ server.cfg
 .Python
 *.komodoproject
 *.pyc
+dist
+*.egg-info
