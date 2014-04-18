@@ -1,8 +1,9 @@
-Redmine Github Integration
-==========================
+CORGI Integrator
+================
 
-Simple Tornado server that listens to Github pull request events and updates
-referenced Redmine issues.
+Simple Tornado server that listens for webhook events and
+processes them giving configured services a chance to
+react.
 
 Requirements
 ------------
@@ -10,8 +11,10 @@ Requirements
     python-dateutil
     simplejson
     tornado
-    pyredminews
     configobj
+    blinker
+
+Each installed service may have its own requirements.
 
 Installation
 ------------
@@ -27,14 +30,10 @@ Installation
         source corgi-virtualenv/bin/activate
         pip install -r requirements.txt
 
-3. Register hook
+3. Install services
 
-    See sample-subscribe.sh
+    Each inidividual service must be installed on the PYTHONPATH.
+    See each for installation instructions, configuartion, and
+    possible hook registration.
 
-4. Configure server.cfg
-
-    Add a mapping for each GitHub user to the corresponding Redmine user
-
-    Add Redmine and Jenkins login information
-
-    Add repository to job mapping information
+4. Start ./server.py
